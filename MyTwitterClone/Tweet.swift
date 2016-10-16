@@ -21,31 +21,31 @@ class Tweet {
 
     
     init(tweetInfo: NSDictionary) {
-        self.text = tweetInfo["text"] as String
-        let userInfo = tweetInfo["user"] as NSDictionary
+        self.text = tweetInfo["text"] as! String
+        let userInfo = tweetInfo["user"] as! NSDictionary
         //For username
-        self.username = userInfo["name"] as String
+        self.username = userInfo["name"] as! String
         //For screenname
-        self.screenName = userInfo["screen_name"] as String
+        self.screenName = userInfo["screen_name"] as! String
         //For image
-        self.avatarURL = userInfo["profile_image_url"] as String        
+        self.avatarURL = userInfo["profile_image_url"] as! String
         //For retweet
-        self.retweet = tweetInfo["retweet_count"] as Int
+        self.retweet = tweetInfo["retweet_count"] as! Int
         //For id
-        self.id = tweetInfo["id_str"] as String
-        self.userId = userInfo["id_str"] as String
+        self.id = tweetInfo["id_str"] as! String
+        self.userId = userInfo["id_str"] as! String
     }
     
     
     // Method
-    class func parseJSONDataIntoTweets(rawJSONData: NSData) -> [Tweet]? {
+    class func parseJSONDataIntoTweets(rawJSONData: NSData) throws -> [Tweet]? {
         var error: NSError?
-        if let JSONArray = NSJSONSerialization.JSONObjectWithData(rawJSONData, options: nil, error: nil) as? NSArray{
+        if let JSONArray = (try? NSJSONSerialization.JSONObjectWithData(rawJSONData, options: [])) as? NSArray{
             var tweets = [Tweet]()
             
             for JSONDictionary in JSONArray {
                 if let tweetDictionary = JSONDictionary as? NSDictionary {
-                    var newTweet = Tweet(tweetInfo: tweetDictionary)
+                    let newTweet = Tweet(tweetInfo: tweetDictionary)
                     tweets.append(newTweet)
                 }
             }
@@ -58,17 +58,15 @@ class Tweet {
     }
     
     
-    class func paraseJSONDataIntoSingleTweet(rawJSONData: NSData, tweet: Tweet) -> Tweet{
+    class func paraseJSONDataIntoSingleTweet(rawJSONData: NSData, tweet: Tweet) throws -> Tweet{
         var error: NSError?
-        
-        if let tweetDictionary = NSJSONSerialization.JSONObjectWithData(rawJSONData, options: nil, error: &error) as? NSDictionary {
+
+        if let tweetDictionary = try NSJSONSerialization.JSONObjectWithData(rawJSONData, options: []) as? NSDictionary {
             tweet.favorited = tweetDictionary["favorite_count"] as? Int
-        }
-        return tweet
-        
+            }
+            return tweet
+
     }
-    
-    
     
 }
 

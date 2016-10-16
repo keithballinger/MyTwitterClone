@@ -35,7 +35,7 @@ class UserTimeLineControllerViewController: UIViewController, UITableViewDataSou
         //Using Nib instead of segeue
         self.tableView.registerNib(UINib(nibName: "TweetCell", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "TWEET_CELL")
         
-        let appDelagate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelagate = UIApplication.sharedApplication().delegate as! AppDelegate
         self.networkController = appDelagate.networkController
         
         userName.text = self.tweet.username
@@ -54,7 +54,7 @@ class UserTimeLineControllerViewController: UIViewController, UITableViewDataSou
         //Need to get the user's timeline now.
         self.networkController.fetchUserTimeLine(self.tweet, sinceId: nil, maxId: nil, completionHandler: { (errorDescription, tweets) -> (Void) in
             if errorDescription != nil {
-                println(errorDescription)
+                print(errorDescription)
             } else {
                 self.tweets = tweets
                 self.tableView.reloadData()
@@ -86,7 +86,7 @@ class UserTimeLineControllerViewController: UIViewController, UITableViewDataSou
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("TWEET_CELL", forIndexPath: indexPath) as TweetCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("TWEET_CELL", forIndexPath: indexPath) as! TweetCell
         
         let tweet = self.tweets?[indexPath.row]
         
@@ -96,7 +96,7 @@ class UserTimeLineControllerViewController: UIViewController, UITableViewDataSou
 
         //Making call for Image
         self.networkController.downloadUserImageForTweet(tweet!, completionHandler: { (image) -> (Void) in
-            let cellForImage = self.tableView.cellForRowAtIndexPath(indexPath) as TweetCell?
+            let cellForImage = self.tableView.cellForRowAtIndexPath(indexPath) as! TweetCell?
             cellForImage?.profilePic.image = image
             cellForImage?.profilePic.layer.cornerRadius = 10
             cellForImage?.profilePic.layer.masksToBounds = true
@@ -106,8 +106,8 @@ class UserTimeLineControllerViewController: UIViewController, UITableViewDataSou
     
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let newVC = self.storyboard?.instantiateViewControllerWithIdentifier("SingleTweet_VC") as SingleTweetViewController
-        let indexPath = self.tableView.indexPathForSelectedRow()!
+        let newVC = self.storyboard?.instantiateViewControllerWithIdentifier("SingleTweet_VC") as! SingleTweetViewController
+        let indexPath = self.tableView.indexPathForSelectedRow!
         let selectedTweet = self.tweets?[indexPath.row]
         newVC.tweet = selectedTweet
         self.navigationController?.pushViewController(newVC, animated: true)
@@ -115,12 +115,12 @@ class UserTimeLineControllerViewController: UIViewController, UITableViewDataSou
     
     //For pull refresh
     func refresh_pull(sender: AnyObject) {
-        println("REFRESHING")
+        print("REFRESHING")
         let tweet = self.tweets?[0]
         self.networkController.fetchUserTimeLine(self.tweet, sinceId: tweet!.id, maxId: nil, completionHandler: { (errorDescription, tweets) -> (Void) in
             if errorDescription != nil {
                 //When something wrong happens, should alert that something went wrong.
-                println(errorDescription)
+                print(errorDescription)
             } else {
                 self.tweets = tweets! + self.tweets!
                 self.tableView.reloadData()
@@ -133,11 +133,11 @@ class UserTimeLineControllerViewController: UIViewController, UITableViewDataSou
     //For endless scrolling
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         if indexPath.row == (tweets!.count - 1) {
-            println("Now Endless Scrolling")
+            print("Now Endless Scrolling")
             let lastTweet = self.tweets?.last
             self.networkController.fetchUserTimeLine(self.tweet, sinceId: nil, maxId: lastTweet!.id, completionHandler: { (errorDescription, tweets) -> (Void) in
                 if errorDescription != nil {
-                    println(errorDescription)
+                    print(errorDescription)
                 } else {
                     var newTweets = tweets!
                     //Need to remove the first tweet to get rid of repeat

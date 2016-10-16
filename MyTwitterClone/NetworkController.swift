@@ -31,7 +31,7 @@ class NetworkController {
             //If granted, set the Account to the SLRequest
             if granted {
                 let accounts = accountStore.accountsWithAccountType(accountType)
-                self.twitterAccount = accounts.first as ACAccount?
+                self.twitterAccount = accounts.first as! ACAccount?
                 let url = NSURL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json")
                 
                 var twitterRequest : SLRequest!
@@ -51,11 +51,11 @@ class NetworkController {
                     
                     switch httpResponse.statusCode {
                     case 200...299:
-                        println("This is good!")
+                        print("This is good!")
                         //Right here, we are on a background queue (thread).
                         //Never do network calls in the main queue.  Social framework takes care of this automatically.
                         let tweets = Tweet.parseJSONDataIntoTweets(data)
-                        println(tweets?.count)
+                        print(tweets?.count)
                         //Need to return back to main thread through.  Now getting back on the main quene.
                         NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
                             //self.tableView.reloadData()
@@ -67,14 +67,14 @@ class NetworkController {
                         
                         
                     case 400...499:
-                        println("This is the clients fault")
-                        println(httpResponse.description)
+                        print("This is the clients fault")
+                        print(httpResponse.description)
                         completionHandler(errorDescription: "This is the clients fault", tweets: nil)
                     case 500...599:
-                        println("This is the servers fault")
+                        print("This is the servers fault")
                         completionHandler(errorDescription: "This is the servers fault", tweets: nil)
                     default:
-                        println("Something bad happened")
+                        print("Something bad happened")
                     }
                 })
                 
@@ -91,7 +91,7 @@ class NetworkController {
             //Caching the image
             var avatarImage: UIImage?
             //Retrieving the value associated with the tweet.avatarURL
-            var data:NSData? = self.imageCache.objectForKey(tweet.avatarURL) as? NSData
+            let data:NSData? = self.imageCache.objectForKey(tweet.avatarURL) as? NSData
             
             //If the image is already cached...
             if let cachedImageData = data {
@@ -133,7 +133,7 @@ class NetworkController {
         twitterRequest.performRequestWithHandler { (data, httpResponse, error) -> Void in
             switch httpResponse.statusCode {
             case 200...299:
-                println("This is good!")
+                print("This is good!")
                 let tweetInfo = Tweet.paraseJSONDataIntoSingleTweet(data, tweet: tweet)
 
                 NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
@@ -141,14 +141,14 @@ class NetworkController {
                 })
                 
             case 400...499:
-                println("This is the clients fault")
-                println(httpResponse.description)
+                print("This is the clients fault")
+                print(httpResponse.description)
                 completionHandler(errorDescription: "This is the clients fault", tweet: nil)
             case 500...599:
-                println("This is the servers fault")
+                print("This is the servers fault")
                 completionHandler(errorDescription: "This is the servers fault", tweet: nil)
             default:
-                println("Something bad happened")
+                print("Something bad happened")
             }
         }
         
@@ -175,7 +175,7 @@ class NetworkController {
         twitterRequest.performRequestWithHandler { (data, httpResponse, error) -> Void in
             switch httpResponse.statusCode {
             case 200...299:
-                println("This is good!")
+                print("This is good!")
                 //Need to parse JSON now.
                 let tweets = Tweet.parseJSONDataIntoTweets(data)
                 
@@ -184,14 +184,14 @@ class NetworkController {
                 })
                 
             case 400...499:
-                println("This is the clients fault")
-                println(httpResponse.description)
+                print("This is the clients fault")
+                print(httpResponse.description)
                 completionHandler(errorDescription: "This is the clients fault", tweets: nil)
             case 500...599:
-                println("This is the servers fault")
+                print("This is the servers fault")
                 completionHandler(errorDescription: "This is the servers fault", tweets: nil)
             default:
-                println("Something bad happened")
+                print("Something bad happened")
             }
         }
         

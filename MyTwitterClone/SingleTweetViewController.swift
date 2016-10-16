@@ -23,12 +23,12 @@ class SingleTweetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let appDelagate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelagate = UIApplication.sharedApplication().delegate as! AppDelegate
         self.networkController = appDelagate.networkController
         
         self.networkController.fetchSingleTweet(tweet, completionHandler: { (errorDescription, tweet) -> (Void) in
             if errorDescription != nil {
-                println(errorDescription)
+                print(errorDescription)
             } else {
                 self.tweet = tweet
                 self.favorited.text = self.tweet.favorited!.description
@@ -38,12 +38,12 @@ class SingleTweetViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         
-        var retweetInt = self.tweet.retweet
-        var retweetStr = String(retweetInt)
+        let retweetInt = self.tweet.retweet
+        let retweetStr = String(retweetInt)
         retweet.text = retweetStr
         
         //This is for the gesture
-        var tapRecongizer = UITapGestureRecognizer(target: self, action: "userPressed:")
+        let tapRecongizer = UITapGestureRecognizer(target: self, action: "userPressed:")
         self.profilePic.addGestureRecognizer(tapRecongizer)
         
         textView.text = self.tweet.text
@@ -62,9 +62,9 @@ class SingleTweetViewController: UIViewController {
     
     //When the image button is pressed
     func userPressed(sender : UITapGestureRecognizer) {
-        println("user image is pressed")
+        print("user image is pressed")
         
-        let newVC = self.storyboard?.instantiateViewControllerWithIdentifier("USER_TIMELINE_VC") as UserTimeLineControllerViewController
+        let newVC = self.storyboard?.instantiateViewControllerWithIdentifier("USER_TIMELINE_VC") as! UserTimeLineControllerViewController
         newVC.tweet = self.tweet
         self.navigationController?.pushViewController(newVC, animated: true)
     }

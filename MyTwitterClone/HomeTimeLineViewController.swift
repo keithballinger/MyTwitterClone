@@ -39,7 +39,7 @@ class HomeTimeLineViewController: UIViewController, UITableViewDataSource, UITab
         //From AppDelagate, using it now.
         //Down casting so we now know its from AppDelagate 
         //The AppDelagate is from the sharedAppliction()
-        let appDelagate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelagate = UIApplication.sharedApplication().delegate as! AppDelegate
         self.networkController = appDelagate.networkController
         
         //Important!
@@ -47,7 +47,7 @@ class HomeTimeLineViewController: UIViewController, UITableViewDataSource, UITab
         self.networkController.fetchHomeTimeLine(nil, maxId: nil, completionHandler: { (errorDescription, tweets) -> (Void) in
             if errorDescription != nil {
                 //When something wrong happens, should alert that something went wrong.
-                println(errorDescription)
+                print(errorDescription)
             } else {
                 self.tweets = tweets
                 self.tableView.reloadData()
@@ -75,7 +75,7 @@ class HomeTimeLineViewController: UIViewController, UITableViewDataSource, UITab
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // Step 1: dequeue the cell
-        let cell = tableView.dequeueReusableCellWithIdentifier("TWEET_CELL", forIndexPath: indexPath) as TweetCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("TWEET_CELL", forIndexPath: indexPath) as! TweetCell
         // Step 2 figure out which model object youre going to use to configure the cell
         // This is where we would grab a reference to the correct tweet and use it to configure the cell
         let tweet = self.tweets?[indexPath.row]
@@ -121,8 +121,8 @@ class HomeTimeLineViewController: UIViewController, UITableViewDataSource, UITab
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        let newVC = self.storyboard?.instantiateViewControllerWithIdentifier("SingleTweet_VC") as SingleTweetViewController
-        let indexPath = self.tableView.indexPathForSelectedRow()!
+        let newVC = self.storyboard?.instantiateViewControllerWithIdentifier("SingleTweet_VC") as! SingleTweetViewController
+        let indexPath = self.tableView.indexPathForSelectedRow!
         let selectedTweet = self.tweets?[indexPath.row]
         newVC.tweet = selectedTweet
         self.navigationController?.pushViewController(newVC, animated: true)
@@ -130,12 +130,12 @@ class HomeTimeLineViewController: UIViewController, UITableViewDataSource, UITab
     
     //For pull refresh
     func refresh_pull(sender: AnyObject) {
-        println("REFRESHING")
+        print("REFRESHING")
         let tweet = self.tweets?[0]
         self.networkController.fetchHomeTimeLine(tweet!.id, maxId: nil, completionHandler: { (errorDescription, tweets) -> (Void) in
             if errorDescription != nil {
                 //When something wrong happens, should alert that something went wrong.
-                println(errorDescription)
+                print(errorDescription)
             } else {
                 self.tweets = tweets! + self.tweets!
                 self.tableView.reloadData()
@@ -149,11 +149,11 @@ class HomeTimeLineViewController: UIViewController, UITableViewDataSource, UITab
     //For endless scrolling
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         if indexPath.row == (tweets!.count - 1) {
-            println("Now Endless Scrolling")
+            print("Now Endless Scrolling")
             let tweet = self.tweets?.last
             self.networkController.fetchHomeTimeLine(nil, maxId: tweet?.id, completionHandler: { (errorDescription, tweets) -> (Void) in
                 if errorDescription != nil {
-                    println(errorDescription)
+                    print(errorDescription)
                 } else {
                     var newTweets = tweets!
                     //Need to remove the first tweet to get rid of repeat
